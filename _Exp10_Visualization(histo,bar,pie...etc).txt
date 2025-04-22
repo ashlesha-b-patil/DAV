@@ -1,0 +1,83 @@
+
+
+Step1: Import Required Libraries
+
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    from sklearn.datasets import load_iris
+
+Step2: Load the Iris Dataset
+
+    iris = load_iris()
+    df = pd.DataFrame(data=np.c_[iris['data'], iris['target']], columns=iris['feature_names'] + ['target'])
+
+Step 3: Plot Histogram (Distribution of Sepal Length)
+
+    plt.figure(figsize=(8, 6))
+    sns.histplot(df['sepal length (cm)'], kde=True)
+    plt.title('Histogram of Sepal Length')
+    plt.xlabel('Sepal Length (cm)')
+    plt.ylabel('Frequency')
+    plt.show()
+
+[]
+
+Step 4: Bar Chart (Count of Target Classes)
+
+    plt.figure(figsize=(8, 6))
+    sns.countplot(x='target', data=df)
+    plt.title('Bar Chart of Target Classes')
+    plt.xlabel('Target Class')
+    plt.ylabel('Count')
+    plt.show()
+
+[]
+
+Step 5: Pie Chart (Proportion of Each Class)
+
+    # 3. Pie Chart (proportion of each target class)
+    target_counts = df['target'].value_counts()
+    plt.figure(figsize=(8, 6))
+    plt.pie(target_counts, labels=target_counts.index, autopct='%1.1f%%')
+    plt.title('Pie Chart of Target Classes')
+    plt.show()
+
+[]
+
+🔹 Step 6: Box Plot (Petal Length by Target Class)
+
+    # 4. Box Plot (distribution of petal length by target class)
+    plt.figure(figsize=(10, 6))
+    sns.boxplot(x='target', y='petal length (cm)', data=df)
+    plt.title('Box Plot of Petal Length by Target Class')
+    plt.xlabel('Target Class')
+    plt.ylabel('Petal Length (cm)')
+    plt.show()
+
+[]
+
+Step 7: Violin Plot (Petal Width by Target Class)
+
+    # 5. Violin Plot (distribution of petal width by target class)
+    plt.figure(figsize=(10, 6))
+    sns.violinplot(x='target', y='petal width (cm)', data=df)
+    plt.title('Violin Plot of Petal Width by Target Class')
+    plt.xlabel('Target Class')
+    plt.ylabel('Petal Width (cm)')
+    plt.show()
+
+[]
+
+Step 8: Regression Plot (Sepal Length vs Sepal Width)
+
+    # 6. Regression Plot (relationship between sepal length and sepal width)
+    plt.figure(figsize=(8, 6))
+    sns.regplot(x='sepal length (cm)', y='sepal width (cm)', data=df)
+    plt.title('Regression Plot of Sepal Length vs. Sepal Width')
+    plt.xlabel('Sepal Length (cm)')
+    plt.ylabel('Sepal Width (cm)')
+    plt.show()
+
+[]

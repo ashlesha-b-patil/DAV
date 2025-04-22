@@ -1,0 +1,77 @@
+Step 1: Load the dataset and required libraries
+We'll load the necessary libraries and the iris dataset.
+
+# Load necessary libraries
+library(ggplot2)
+library(corrplot)
+
+# Load the iris dataset
+data(iris)
+
+
+Step 2: Calculate and visualize the correlation matrix
+We calculate the correlation matrix of the numerical variables and visualize it using a heatmap.
+
+# Calculate the correlation matrix for numerical variables (Sepal.Length, Sepal.Width, Petal.Length, Petal.Width)
+cor_matrix <- cor(iris[, 1:4])
+
+# Visualize the correlation matrix using corrplot
+corrplot(cor_matrix, method = "circle", type = "upper", tl.col = "black", tl.srt = 45)
+
+
+Step 3: Pairwise scatter plots for visualizing relationships between variables
+We'll create scatter plots between pairs of variables to examine the relationships.
+
+# Scatter plot between Sepal.Length and Petal.Length
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point(aes(color = Species), size = 3) +
+  theme_minimal() +
+  labs(title = "Scatter plot: Sepal Length vs Petal Length", x = "Sepal Length", y = "Petal Length")
+
+Step 4: Explore additional relationships with other scatter plots
+Next, let's look at the relationship between Sepal.Width and Petal.Width.
+# Scatter plot between Sepal.Width and Petal.Width
+ggplot(iris, aes(x = Sepal.Width, y = Petal.Width)) +
+  geom_point(aes(color = Species), size = 3) +
+  theme_minimal() +
+  labs(title = "Scatter plot: Sepal Width vs Petal Width", x = "Sepal Width", y = "Petal Width")
+
+Step 5: Add regression lines to scatter plots for better understanding
+Adding regression lines to the scatter plots will help us understand the trend of the relationships.
+# Scatter plot with regression line: Sepal.Length vs Petal.Length
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point(aes(color = Species), size = 3) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  theme_minimal() +
+  labs(title = "Regression Line: Sepal Length vs Petal Length", x = "Sepal Length", y = "Petal Length")
+
+Step 6: Examine relationships across all variables using a pair plot (using GGally)
+You can use the GGally package to create a pair plot (a matrix of scatter plots with histograms) for a more comprehensive visualization.
+
+# Load GGally library
+library(GGally)
+
+# Create a pair plot to show relationships across all numerical variables
+ggpairs(iris[, 1:4], aes(color = iris$Species))
+
+
+# Step 7: Correlation heatmap without using reshape2 or tibble
+
+# Load required library
+library(ggplot2)
+
+# Calculate the correlation matrix
+cor_matrix <- cor(iris[, 1:4])
+
+# Convert to long format manually
+cor_df <- as.data.frame(as.table(cor_matrix))
+
+# Plot the heatmap
+ggplot(cor_df, aes(x = Var1, y = Var2, fill = Freq)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = round(Freq, 2)), color = "black", size = 4) +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                       midpoint = 0, limit = c(-1, 1)) +
+  theme_minimal() +
+  labs(title = "Correlation Heatmap of Iris Variables", x = "", y = "") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))

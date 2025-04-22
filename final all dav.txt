@@ -1,0 +1,1302 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# # Q1) Getting introduced to data analytics libraries in Python and R
+
+# # 1. Pandas
+
+# In[2]:
+
+
+import pandas as pd
+# Create a DataFrame
+data = {'Name': ['Arthur', 'John', 'Dutch','Hosea'], 'Age': [25, 30, 35, 40]}
+df = pd.DataFrame(data)
+# Filter rows where Age > 25
+filtered_df = df[df['Age'] > 25]
+print(filtered_df)
+
+
+# # 2. Numpy 
+
+# In[3]:
+
+
+import numpy as np
+# Create a NumPy array
+arr = np.array([150, 2200, 30, 44, 59])# Calculate the mean of the array
+mean_value = np.mean(arr)
+print(mean_value)
+median_value = np.median(arr)
+print(median_value)
+
+
+# # 3. Matplotlib
+
+# In[5]:
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib
+import matplotlib as mpl
+
+vegetables = ["cucumber", "tomato", "lettuce", "asparagus",
+              "potato", "wheat", "barley"]
+farmers = ["Farmer Joe", "Upland Bros.", "Smith Gardening",
+           "Agrifun", "Organiculture", "BioGoods Ltd.", "Cornylee Corp."]
+
+harvest = np.array([
+    [0.8, 2.4, 2.5, 3.9, 0.0, 4.0, 0.0],
+    [2.4, 0.0, 4.0, 1.0, 2.7, 0.0, 0.0],
+    [1.1, 2.4, 0.8, 4.3, 1.9, 4.4, 0.0],
+    [0.6, 0.0, 0.3, 0.0, 3.1, 0.0, 0.0],
+    [0.7, 1.7, 0.6, 2.6, 2.2, 6.2, 0.0],
+    [1.3, 1.2, 0.0, 0.0, 0.0, 3.2, 5.1],
+    [0.1, 2.0, 0.0, 1.4, 0.0, 1.9, 6.3]
+])
+
+def heatmap(data, row_labels, col_labels, ax=None, cbar_kw=None, cbarlabel="", **kwargs):
+    if ax is None:
+        ax = plt.gca()
+    if cbar_kw is None:
+        cbar_kw = {}
+    im = ax.imshow(data, **kwargs)
+
+    cbar = ax.figure.colorbar(im, ax=ax, **cbar_kw)
+    cbar.ax.set_ylabel(cbarlabel, rotation=-90, va="bottom")
+
+    ax.set_xticks(range(data.shape[1]), labels=col_labels, rotation=-30,
+                  ha="right", rotation_mode="anchor")
+    ax.set_yticks(range(data.shape[0]), labels=row_labels)
+
+    ax.tick_params(top=True, bottom=False, labeltop=True, labelbottom=False)
+    for edge, spine in ax.spines.items():
+        spine.set_visible(False)
+
+    ax.set_xticks(np.arange(data.shape[1]+1)-.5, minor=True)
+    ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
+    ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
+    ax.tick_params(which="minor", bottom=False, left=False)
+    return im, cbar
+
+def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
+                     textcolors=("black", "white"), threshold=None, **textkw):
+    if not isinstance(data, (list, np.ndarray)):
+        data = im.get_array()
+    if threshold is not None:
+        threshold = im.norm(threshold)
+    else:
+        threshold = im.norm(data.max()) / 2.
+
+    kw = dict(horizontalalignment="center", verticalalignment="center")
+    kw.update(textkw)
+
+    if isinstance(valfmt, str):
+        valfmt = matplotlib.ticker.StrMethodFormatter(valfmt)
+
+    texts = []
+    for i in range(data.shape[0]):
+        for j in range(data.shape[1]):
+            kw.update(color=textcolors[int(im.norm(data[i, j]) > threshold)])
+            text = im.axes.text(j, i, valfmt(data[i, j], None), **kw)
+            texts.append(text)
+    return texts
+
+fig, ax = plt.subplots()
+im, cbar = heatmap(harvest, vegetables, farmers, ax=ax, cmap="YlGn",
+                   cbarlabel="harvest [t/year]")
+texts = annotate_heatmap(im, valfmt="{x:.1f} t")
+
+fig.tight_layout()
+plt.show()
+
+
+# # 4. Seaborn
+
+# In[9]:
+
+
+from sklearn.datasets import load_iris
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load dataset
+iris = load_iris()
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+df['species'] = iris.target_names[iris.target]
+
+# Simple Seaborn scatter plot
+sns.scatterplot(data=df, x='sepal length (cm)', y='sepal width (cm)', hue='species')
+plt.title("Sepal Length vs Width")
+plt.show()
+
+
+# # 5. Scikit-learn
+
+# In[13]:
+
+
+from sklearn.datasets import load_diabetes
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+
+# Load dataset
+diabetes = load_diabetes()
+X = diabetes.data[:, [0]]  # Use only one feature for line plot (e.g., BMI)
+y = diabetes.target
+
+# Train model
+model = LinearRegression()
+model.fit(X, y)
+
+# Predict
+y_pred = model.predict(X)
+
+# Plot
+plt.scatter(X, y, color='lightblue', label='Actual')
+plt.plot(X, y_pred, color='red', label='Regression Line')
+plt.title("Diabetes Dataset - BMI vs Disease Progression")
+plt.xlabel("BMI")
+plt.ylabel("Disease Progression")
+plt.legend()
+plt.show()
+
+
+# # 6.SciPy
+
+# In[17]:
+
+
+import matplotlib.pyplot as plt
+from sklearn import datasets
+from scipy import stats
+
+# Load dataset
+iris = datasets.load_iris()
+data = iris.data
+target = iris.target
+
+# Scatter plot (Sepal Length vs Sepal Width)
+plt.scatter(data[:, 0], data[:, 1], c=target, cmap='viridis')
+plt.xlabel('Sepal Length (cm)')
+plt.ylabel('Sepal Width (cm)')
+plt.title('Sepal Length vs Sepal Width')
+plt.colorbar(label='Species')
+plt.show()
+
+# Histogram (Sepal Length Distribution)
+plt.hist(data[:, 0], bins=15, color='skyblue', edgecolor='black')
+plt.title('Sepal Length Distribution')
+plt.xlabel('Sepal Length (cm)')
+plt.ylabel('Frequency')
+plt.show()
+
+# Correlation coefficient (Sepal Length and Sepal Width)
+correlation, _ = stats.pearsonr(data[:, 0], data[:, 1])
+print(f"Pearson Correlation: {correlation:.2f}")
+
+
+# # 7.Ploty
+
+# In[21]:
+
+
+import plotly.express as px
+
+# Load the inbuilt "tips" dataset
+df = px.data.tips()
+
+# Boxplot of tip distribution by day of the week
+fig = px.box(df, x="day", y="tip", color="day", 
+             title="Tip Distribution by Day", 
+             labels={"day": "Day of the Week", "tip": "Tip ($)"})
+fig.show()
+
+
+# # 8. Statsmodels
+
+# In[24]:
+
+
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the inbuilt 'Prestige' dataset from statsmodels
+data = sm.datasets.get_rdataset('Prestige', package='carData').data
+
+# Scatter plot of income vs education
+plt.figure(figsize=(10, 6))
+sns.scatterplot(x='education', y='income', data=data, color='blue')
+
+# Fit a linear regression model using statsmodels
+X = sm.add_constant(data['education'])  # Add constant term for the intercept
+y = data['income']
+model = sm.OLS(y, X).fit()
+
+# Plot the regression line
+plt.plot(data['education'], model.predict(X), color='red', label='Regression Line')
+
+# Add labels and title
+plt.xlabel('Education (Years)')
+plt.ylabel('Income ($)')
+plt.title('Income vs Education with Regression Line')
+plt.legend()
+
+# Show the plot
+plt.show()
+
+
+# # 9.Keras
+
+# In[27]:
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import tensorflow as tf
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+# Load and prepare the Iris dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
+X_scaled = StandardScaler().fit_transform(X)
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.3, random_state=42)
+
+# Define, compile and train the model in one line using Keras
+model = tf.keras.Sequential([
+    tf.keras.layers.Dense(10, activation='relu', input_shape=(X_train.shape[1],)),
+    tf.keras.layers.Dense(3, activation='softmax')
+])
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.fit(X_train, y_train, epochs=50, batch_size=10, validation_data=(X_test, y_test), verbose=0)
+
+# Predict and visualize
+y_pred = np.argmax(model.predict(X_test), axis=1)
+plt.scatter(range(len(y_test)), y_test, color='blue', label='True Labels')
+plt.scatter(range(len(y_pred)), y_pred, color='red', label='Predictions')
+plt.legend()
+plt.title('Keras Predictions vs True Labels')
+plt.show()
+
+
+# # 10.TensorFlow
+
+# In[33]:
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+
+# Load and preprocess data
+iris = load_iris()
+X = StandardScaler().fit_transform(iris.data)
+y = iris.target
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Build and train the model
+model = tf.keras.Sequential([tf.keras.layers.Dense(10, activation='relu', input_dim=X_train.shape[1]), tf.keras.layers.Dense(3, activation='softmax')])
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.fit(X_train, y_train, epochs=50, batch_size=10, verbose=0)
+
+# Predict and plot histogram
+y_pred = np.argmax(model.predict(X_test), axis=1)
+plt.hist([y_test, y_pred], bins=np.arange(4) - 0.5, stacked=True, label=['True', 'Predicted'], color=['blue', 'red'])
+plt.legend()
+plt.title('Histogram of True vs Predicted Labels')
+plt.xlabel('Class Labels')
+plt.ylabel('Frequency')
+plt.show()
+
+
+# In[ ]:
+
+
+
+
+ contiune of r libraries
+
+
+
+✅ Section 1: Installation and Setup
+
+# List of libraries to use
+libs <- c("ggplot2", "dplyr", "tidyr", "datasets", "corrplot", 
+          "plotly", "ggthemes", "psych", "gridExtra", "lattice")
+
+# Install missing libraries
+install_if_missing <- function(pkg) {
+  if (!require(pkg, character.only = TRUE)) install.packages(pkg)
+}
+invisible(lapply(libs, install_if_missing))
+
+# Load all libraries
+lapply(libs, library, character.only = TRUE)
+
+# Load dataset
+data("mtcars")
+
+📊 Section 2: ggplot2 – Scatter Plot
+
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point(color = "blue") +
+  ggtitle("Weight vs MPG") +
+  theme_minimal()
+
+📈 Section 3: dplyr – Summary Table
+
+mtcars %>%
+  group_by(cyl) %>%
+  summarise(Avg_MPG = mean(mpg)) %>%
+  print()
+🧹 Section 4: tidyr – Row Names to Column
+
+mtcars2 <- mtcars %>%
+  mutate(Car = rownames(mtcars)) %>%
+  select(Car, everything())
+
+head(mtcars2)
+
+🔗 Section 5: corrplot – Correlation Matrix Plot
+
+corr_matrix <- cor(mtcars)
+corrplot(corr_matrix, method = "circle")
+
+🌀 Section 6: plotly – Interactive Plot
+
+plot_ly(data = mtcars, x = ~hp, y = ~qsec, type = "scatter", mode = "markers")
+
+🎨 Section 7: ggthemes – Styled Bar Plot
+
+ggplot(mtcars, aes(factor(cyl), fill = factor(gear))) +
+  geom_bar(position = "dodge") +
+  ggtitle("Cylinder vs Gear") +
+  theme_economist()
+
+📋 Section 8: psych – Describe Data
+
+describe(mtcars[, 1:5])
+
+🧩 Section 9: gridExtra – Arrange Multiple Plots
+
+p1 <- ggplot(mtcars, aes(x = wt, y = mpg)) + 
+  geom_point() + ggtitle("Weight vs MPG")
+
+p2 <- ggplot(mtcars, aes(factor(gear), fill = factor(cyl))) + 
+  geom_bar(position = "dodge") + ggtitle("Gear vs Cyl")
+
+grid.arrange(p1, p2, ncol = 2)
+
+📦 Section 10: lattice – Histogram by Group
+histogram(~mpg | factor(cyl), data = mtcars,
+          layout = c(3, 1),
+          main = "MPG by Cylinder Count",
+          col = "lightblue")
+
+
+
+
+
+
+EXP2
+
+
+    # # Q2)  Linear Regression
+
+    # Step 1: Import Libraries
+
+    # In[2]:
+
+
+    import numpy as np
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    from sklearn.model_selection import train_test_split
+    from sklearn.linear_model import LinearRegression
+    from sklearn.metrics import mean_squared_error, r2_score
+
+
+    # Step 2: Load the Dataset
+
+    # In[31]:
+
+
+    # Load dataset (Example: Boston Housing Dataset)
+    import pandas as pd
+
+    # Load dataset from CSV
+    data = pd.read_csv('boston.csv')
+    # Display the first few rows of the dataset
+    print(data.head())
+
+
+    # Step 3: Prepare the Data
+
+    # In[10]:
+
+
+    X = data.drop('medv', axis=1)
+    y = data['medv']
+
+
+    # Step 4: Split the Data
+
+    # In[12]:
+
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y,
+    test_size=0.2, random_state=42)
+
+
+    # Step 5: Train the Model
+
+    # In[13]:
+
+
+    # Create the linear regression model
+    model = LinearRegression()
+    # Train the model
+    model.fit(X_train, y_train)
+    LinearRegression()
+
+
+    # Step 6: Make Predictions
+
+    # In[15]:
+
+
+    # Make predictions
+    y_pred = model.predict(X_test)
+
+
+    # Step 7: Evaluate the Model
+
+    # In[16]:
+
+
+    # Calculate Mean Squared Error (MSE)
+    mse = mean_squared_error(y_test, y_pred)
+    print('Mean Squared Error:', mse)
+    # Calculate R-squared (R²) score
+    r2 = r2_score(y_test, y_pred)
+    print('R-squared:', r2)
+
+
+    # Step 8: Visualize the Results
+
+    # In[17]:
+
+
+    # Scatter plot of actual vs predicted
+    plt.scatter(y_test, y_pred)
+    plt.xlabel('Actual Prices')
+    plt.ylabel('Predicted Prices')
+    plt.title('Actual vs Predicted Prices')
+    # Add the linear regression line (45-degree line)
+    plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)],
+    color='red', linestyle='--')
+    plt.show()
+
+
+
+  
+
+EXP3  (MULTIPLE LINEAR)
+
+
+
+
+
+Multiple Linear Regression (Exp 3)
+
+Step 1: Import Libraries
+
+    import pandas as pd
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    import statsmodels.api as sm
+    from sklearn.model_selection import train_test_split
+    from sklearn.metrics import mean_squared_error, r2_score
+
+Step 2: Load the Iris Dataset
+
+    # Load the Iris dataset
+    iris = sns.load_dataset('iris')
+
+    # Display the first few rows of the dataset
+    print(iris.head())
+
+       sepal_length  sepal_width  petal_length  petal_width species
+    0           5.1          3.5           1.4          0.2  setosa
+    1           4.9          3.0           1.4          0.2  setosa
+    2           4.7          3.2           1.3          0.2  setosa
+    3           4.6          3.1           1.5          0.2  setosa
+    4           5.0          3.6           1.4          0.2  setosa
+
+Step 3: Define Features and Target Variable
+
+    # Define the independent variables (features) and the dependent variable (target)
+    X = iris[['sepal_length', 'sepal_width', 'petal_width']]  # Features
+    y = iris['petal_length']  # Target variable
+
+Step 4: Split the Dataset
+
+    # Split the dataset into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+Step 5: Add a Constant to the Model
+
+Step 6: Fit the Multiple Linear Regression Model
+
+Step 7: Print the Model Summary
+
+    # Add a constant to the model (intercept)
+    X_train_sm = sm.add_constant(X_train)
+
+    # Fit the multiple linear regression model
+    model = sm.OLS(y_train, X_train_sm).fit()
+
+    # Print the model summary
+    print(model.summary())
+
+                                OLS Regression Results                            
+    ==============================================================================
+    Dep. Variable:           petal_length   R-squared:                       0.970
+    Model:                            OLS   Adj. R-squared:                  0.969
+    Method:                 Least Squares   F-statistic:                     1243.
+    Date:                Mon, 21 Apr 2025   Prob (F-statistic):           5.65e-88
+    Time:                        20:06:07   Log-Likelihood:                -27.046
+    No. Observations:                 120   AIC:                             62.09
+    Df Residuals:                     116   BIC:                             73.24
+    Df Model:                           3                                         
+    Covariance Type:            nonrobust                                         
+    ================================================================================
+                       coef    std err          t      P>|t|      [0.025      0.975]
+    --------------------------------------------------------------------------------
+    const           -0.2622      0.312     -0.840      0.402      -0.880       0.356
+    sepal_length     0.7228      0.061     11.846      0.000       0.602       0.844
+    sepal_width     -0.6358      0.072     -8.827      0.000      -0.778      -0.493
+    petal_width      1.4675      0.071     20.526      0.000       1.326       1.609
+    ==============================================================================
+    Omnibus:                        3.174   Durbin-Watson:                   2.098
+    Prob(Omnibus):                  0.205   Jarque-Bera (JB):                2.636
+    Skew:                           0.341   Prob(JB):                        0.268
+    Kurtosis:                       3.250   Cond. No.                         76.6
+    ==============================================================================
+
+    Notes:
+    [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+Step 8: Make Predictions
+
+    # Prepare the test set by adding a constant
+    X_test_sm = sm.add_constant(X_test)
+
+    # Make predictions
+    y_pred = model.predict(X_test_sm)
+
+Step 9: Evaluate the Model
+
+    # Evaluate the model
+    mse = mean_squared_error(y_test, y_pred)
+    r2 = r2_score(y_test, y_pred)
+
+    print(f'Mean Squared Error: {mse}')
+    print(f'R-squared: {r2}')
+
+    Mean Squared Error: 0.1300162603138272
+    R-squared: 0.9603293155857663
+
+Step 10: Visualize Actual vs. Predicted Values
+
+    # Create a DataFrame for plotting
+    results = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
+
+    # Scatter plot of actual vs predicted values
+    plt.figure(figsize=(10, 6))
+    plt.scatter(results['Actual'], results['Predicted'], color='blue', alpha=0.6)
+    plt.plot([results['Actual'].min(), results['Actual'].max()], 
+             [results['Actual'].min(), results['Actual'].max()], 
+             color='red', linestyle='--')  # Diagonal line
+    plt.title('Actual vs Predicted Petal Length')
+    plt.xlabel('Actual Petal Length')
+    plt.ylabel('Predicted Petal Length')
+    plt.grid()
+    plt.show()
+
+
+
+
+EXP4 (TIME SERIES)
+
+
+
+
+Time Series Analysis on Boston Data
+
+Step 1: Import Libraries
+
+    # Step 1: Import Libraries
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from statsmodels.tsa.stattools import adfuller
+    from statsmodels.tsa.arima.model import ARIMA
+    from sklearn.datasets import fetch_openml
+
+Step 2: Load the Boston Housing Dataset
+
+    # Step 2: Load Boston Dataset
+    boston = fetch_openml(name="boston", version=1, as_frame=True)
+    df = boston.frame
+
+    # Preview data
+    print(df.head())
+
+          CRIM    ZN  INDUS CHAS    NOX     RM   AGE     DIS RAD    TAX  PTRATIO  \
+    0  0.00632  18.0   2.31    0  0.538  6.575  65.2  4.0900   1  296.0     15.3   
+    1  0.02731   0.0   7.07    0  0.469  6.421  78.9  4.9671   2  242.0     17.8   
+    2  0.02729   0.0   7.07    0  0.469  7.185  61.1  4.9671   2  242.0     17.8   
+    3  0.03237   0.0   2.18    0  0.458  6.998  45.8  6.0622   3  222.0     18.7   
+    4  0.06905   0.0   2.18    0  0.458  7.147  54.2  6.0622   3  222.0     18.7   
+
+            B  LSTAT  MEDV  
+    0  396.90   4.98  24.0  
+    1  396.90   9.14  21.6  
+    2  392.83   4.03  34.7  
+    3  394.63   2.94  33.4  
+    4  396.90   5.33  36.2  
+
+Step 3: Simulate a Time Series using 'AGE' and 'MEDV' (Median House Value)
+
+    # We'll sort by 'AGE' to simulate time progression
+    df_sorted = df.sort_values(by='AGE')
+    df_grouped = df_sorted.groupby('AGE')['MEDV'].mean().reset_index()
+
+    # Visualize
+    plt.figure(figsize=(10, 6))
+    plt.plot(df_grouped['AGE'], df_grouped['MEDV'], label='Median House Value')
+    plt.title('Median House Value vs Age of Buildings')
+    plt.xlabel('AGE')
+    plt.ylabel('MEDV')
+    plt.grid(True)
+    plt.legend()
+    plt.show()
+
+[]
+
+Step 4: Check for Stationarity
+
+    # Step 4: Check for Stationarity
+    adf_result = adfuller(df_grouped['MEDV'])
+    print(f"ADF Statistic: {adf_result[0]}")
+    print(f"p-value: {adf_result[1]}")
+
+    ADF Statistic: -4.879811644943255
+    p-value: 3.817114412843644e-05
+
+Step 5: Fit an ARIMA Model
+
+    # Step 5: Fit ARIMA Model
+    model = ARIMA(df_grouped['MEDV'], order=(5, 1, 0))
+    model_fit = model.fit()
+    print(model_fit.summary())
+
+                                   SARIMAX Results                                
+    ==============================================================================
+    Dep. Variable:                   MEDV   No. Observations:                  356
+    Model:                 ARIMA(5, 1, 0)   Log Likelihood               -1249.346
+    Date:                Mon, 21 Apr 2025   AIC                           2510.693
+    Time:                        20:25:53   BIC                           2533.926
+    Sample:                             0   HQIC                          2519.936
+                                    - 356                                         
+    Covariance Type:                  opg                                         
+    ==============================================================================
+                     coef    std err          z      P>|z|      [0.025      0.975]
+    ------------------------------------------------------------------------------
+    ar.L1         -0.8586      0.050    -17.112      0.000      -0.957      -0.760
+    ar.L2         -0.7458      0.063    -11.921      0.000      -0.868      -0.623
+    ar.L3         -0.5624      0.071     -7.943      0.000      -0.701      -0.424
+    ar.L4         -0.3843      0.069     -5.549      0.000      -0.520      -0.249
+    ar.L5         -0.2079      0.058     -3.604      0.000      -0.321      -0.095
+    sigma2        66.5111      3.374     19.712      0.000      59.898      73.124
+    ===================================================================================
+    Ljung-Box (L1) (Q):                   0.24   Jarque-Bera (JB):               227.48
+    Prob(Q):                              0.62   Prob(JB):                         0.00
+    Heteroskedasticity (H):               1.77   Skew:                             1.42
+    Prob(H) (two-sided):                  0.00   Kurtosis:                         5.71
+    ===================================================================================
+
+    Warnings:
+    [1] Covariance matrix calculated using the outer product of gradients (complex-step).
+
+Step 6: Forecasting
+
+    # Step 6: Forecast
+    forecast = model_fit.forecast(steps=10)
+    future_ages = np.arange(df_grouped['AGE'].max() + 1, df_grouped['AGE'].max() + 11)
+
+    # Plot
+    plt.figure(figsize=(10, 6))
+    plt.plot(df_grouped['AGE'], df_grouped['MEDV'], label='Historical MEDV')
+    plt.plot(future_ages, forecast, color='red', label='Forecasted MEDV')
+    plt.title('Forecasted Median House Value for Future Age Groups')
+    plt.xlabel('AGE')
+    plt.ylabel('MEDV')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+[]
+
+
+
+
+
+EXP5 (ARIMA)
+
+
+
+
+
+
+IMPLEMENTATION OF ARIMA MODEL IN PYTHON
+
+Step 1: Import Libraries
+
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from sklearn.datasets import fetch_california_housing
+    from statsmodels.tsa.arima.model import ARIMA
+    from statsmodels.tsa.stattools import adfuller
+    from sklearn.metrics import mean_absolute_error, mean_squared_error
+
+Step 2: Load the Dataset and Create a Pseudo-Time-Series (Group by HouseAge)
+
+    data = fetch_california_housing()
+    df = pd.DataFrame(data.data, columns=data.feature_names)
+    df['MedHouseVal'] = data.target  # Add the target 
+
+    ts_data = df.groupby('HouseAge')['MedHouseVal'].mean().reset_index()
+
+Step 3: Visualize the Data and Check for Stationarity (ADF Test)
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(ts_data['HouseAge'], ts_data['MedHouseVal'])
+    plt.title('Average House Value by House Age')
+    plt.xlabel('House Age')
+    plt.ylabel('Average House Value')
+    plt.grid(True)
+    plt.show()
+
+    adf_result = adfuller(ts_data['MedHouseVal'])
+    print(f"ADF Statistic: {adf_result[0]}")
+    print(f"p-value: {adf_result[1]}")
+
+[]
+
+    ADF Statistic: -0.6133389878029727
+    p-value: 0.8679393862082889
+
+Step 4: Apply Differencing and Train-Test Split
+
+    ts_data['Diff_Val'] = ts_data['MedHouseVal'].diff()
+
+    # Check stationarity again
+    adf_diff_result = adfuller(ts_data['Diff_Val'].dropna())
+    print(f"ADF (Differenced) Statistic: {adf_diff_result[0]}")
+    print(f"p-value (Differenced): {adf_diff_result[1]}")
+
+    train_size = int(len(ts_data) * 0.8)
+    train = ts_data['MedHouseVal'][:train_size]
+    test = ts_data['MedHouseVal'][train_size:]
+
+    ADF (Differenced) Statistic: -6.1189966626889145
+    p-value (Differenced): 8.949756277120397e-08
+
+Step 5: Fit ARIMA Model and Forecast
+
+    model = ARIMA(train, order=(2,1,2))  # You can experiment with (p,d,q)
+    model_fit = model.fit()
+    print(model_fit.summary())
+
+    forecast = model_fit.forecast(steps=len(test))
+
+                                   SARIMAX Results                                
+    ==============================================================================
+    Dep. Variable:            MedHouseVal   No. Observations:                   41
+    Model:                 ARIMA(2, 1, 2)   Log Likelihood                  20.783
+    Date:                Mon, 21 Apr 2025   AIC                            -31.567
+    Time:                        20:53:39   BIC                            -23.122
+    Sample:                             0   HQIC                           -28.514
+                                     - 41                                         
+    Covariance Type:                  opg                                         
+    ==============================================================================
+                     coef    std err          z      P>|z|      [0.025      0.975]
+    ------------------------------------------------------------------------------
+    ar.L1         -1.0743      0.238     -4.518      0.000      -1.540      -0.608
+    ar.L2         -0.8642      0.238     -3.628      0.000      -1.331      -0.397
+    ma.L1          1.3383      1.852      0.723      0.470      -2.292       4.969
+    ma.L2          0.9847      2.602      0.378      0.705      -4.115       6.085
+    sigma2         0.0191      0.047      0.409      0.683      -0.073       0.111
+    ===================================================================================
+    Ljung-Box (L1) (Q):                   0.33   Jarque-Bera (JB):               389.47
+    Prob(Q):                              0.56   Prob(JB):                         0.00
+    Heteroskedasticity (H):               0.08   Skew:                             2.95
+    Prob(H) (two-sided):                  0.00   Kurtosis:                        17.10
+    ===================================================================================
+
+    Warnings:
+    [1] Covariance matrix calculated using the outer product of gradients (complex-step).
+
+    C:\Users\Admin\anaconda3\Lib\site-packages\statsmodels\base\model.py:607: ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check mle_retvals
+      warnings.warn("Maximum Likelihood optimization failed to "
+
+Step 6: Evaluate the Model and Plot Forecast vs Actual
+
+    mae = mean_absolute_error(test, forecast)
+    rmse = np.sqrt(mean_squared_error(test, forecast))
+    mape = np.mean(np.abs((test - forecast) / test)) * 100
+
+    print(f"MAE: {mae}")
+    print(f"RMSE: {rmse}")
+    print(f"MAPE: {mape}%")
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(train.index, train, label='Train')
+    plt.plot(test.index, test, label='Test', color='green')
+    plt.plot(test.index, forecast, label='Forecast', color='red')
+    plt.legend()
+    plt.title('ARIMA Forecast vs Actual')
+    plt.grid(True)
+    plt.show()
+
+    MAE: 0.20304543911698802
+    RMSE: 0.28088297553615404
+    MAPE: 8.683272182022682%
+
+[]
+
+
+
+
+EXP6  (TEXT ANALYSIS)
+
+
+
+
+Step 1: Import Required Libraries
+# Step 1: Import Required Libraries
+import numpy as np
+import pandas as pd
+import re
+import nltk
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+from nltk.corpus import stopwords
+from sklearn.datasets import fetch_20newsgroups
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Download stopwords
+nltk.download('stopwords')
+[nltk_data] Downloading package stopwords to
+[nltk_data]     C:\Users\Admin\AppData\Roaming\nltk_data...
+[nltk_data]   Package stopwords is already up-to-date!
+True
+
+
+Step 2: Load Dataset
+# Step 2: Load Inbuilt Dataset (20 Newsgroups)
+categories = ['rec.autos', 'sci.med']  # Simulate spam vs ham
+data = fetch_20newsgroups(subset='all', categories=categories, remove=('headers', 'footers', 'quotes'))
+
+df = pd.DataFrame({'message': data.data, 'label': data.target})  # 0 = rec.autos, 1 = sci.med
+
+
+Step 3: Preprocess Text Data
+# Step 3: Preprocess Text Data
+def preprocess_text(text):
+    text = text.lower()
+    text = re.sub(r'\W', ' ', text)
+    text = re.sub(r'\s+', ' ', text)
+    text = text.strip()
+    words = text.split()
+    words = [word for word in words if word not in stopwords.words('english')]
+    return ' '.join(words)
+
+df['processed_message'] = df['message'].apply(preprocess_text)
+
+Step 4: Convert Text to Features Using TF-IDF
+Step 5: Split Data for Training & Testing
+Step 6: Train the Naïve Bayes Classifier
+
+
+# Step 4: Convert Text to TF-IDF Features
+vectorizer = TfidfVectorizer(max_features=3000)
+X = vectorizer.fit_transform(df['processed_message']).toarray()
+y = df['label']
+
+# Step 5: Split Data for Training and Testing
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 6: Train Naive Bayes Classifier
+model = MultinomialNB()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+
+Step 7: Evaluate Model Performance
+# Step 7: Evaluate Model
+accuracy = accuracy_score(y_test, y_pred)
+print(f'Accuracy: {accuracy:.4f}')
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
+Accuracy: 0.9242
+
+Classification Report:
+               precision    recall  f1-score   support
+
+           0       0.94      0.91      0.92       200
+           1       0.91      0.94      0.92       196
+
+    accuracy                           0.92       396
+   macro avg       0.92      0.92      0.92       396
+weighted avg       0.92      0.92      0.92       396
+
+Step 8: Visualize Results (Confusion Matrix)
+
+# Step 8: Confusion Matrix
+plt.figure(figsize=(6, 4))
+sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d',
+            cmap='Blues', xticklabels=data.target_names, yticklabels=data.target_names)
+plt.xlabel("Predicted Label")
+plt.ylabel("True Label")
+plt.title("Confusion Matrix")
+plt.show()
+
+
+
+
+EXP7 (EDA IN R)
+
+
+🧪 EDA: Air Quality Dataset
+
+# Step 1: Load necessary libraries (base R is mostly enough for EDA)
+# airquality is an inbuilt dataset, so we just load it
+data("airquality")      # Load dataset
+df <- airquality        # Assign to a variable
+
+# Step 2: View basic structure and first few rows
+head(df)                # View first few rows
+str(df)                 # Structure: variable types and summary
+
+# Step 3: Check for missing values (NA)
+colSums(is.na(df))      # Count of NA values in each column
+
+# Step 4: Handle missing values
+# Option 1: Remove rows with NA
+df_clean <- na.omit(df)
+
+# Option 2: Impute with column means (if needed instead of omitting)
+# df$Ozone[is.na(df$Ozone)] <- mean(df$Ozone, na.rm = TRUE)
+# df$Solar.R[is.na(df$Solar.R)] <- mean(df$Solar.R, na.rm = TRUE)
+
+# Step 5: Summary statistics
+summary(df_clean)       # Min, Max, Mean, Median, etc.
+
+# Step 6: Scatter Plot - Temperature vs Ozone
+plot(df_clean$Temp, df_clean$Ozone,
+     main = "Ozone vs Temperature",
+     xlab = "Temperature (F)",
+     ylab = "Ozone (ppb)",
+     col = "blue", pch = 16)
+
+# Step 7: Histogram - Distribution of Ozone
+hist(df_clean$Ozone,
+     main = "Ozone Level Distribution",
+     xlab = "Ozone (ppb)",
+     col = "lightgreen", border = "black")
+
+# Step 8: Boxplot - Ozone by Month
+boxplot(Ozone ~ Month, data = df_clean,
+        main = "Ozone Levels by Month",
+        xlab = "Month", ylab = "Ozone (ppb)",
+        col = "lightblue")
+
+# Step 9: Boxplot - Temperature by Month
+boxplot(Temp ~ Month, data = df_clean,
+        main = "Temperature by Month",
+        xlab = "Month", ylab = "Temperature (F)",
+        col = "lightpink")
+
+# Step 10: Barplot - Average Wind Speed by Month
+avg_wind <- tapply(df_clean$Wind, df_clean$Month, mean)
+
+barplot(avg_wind,
+        main = "Average Wind Speed by Month",
+        xlab = "Month",
+        ylab = "Average Wind (mph)",
+        col = "orange")
+
+
+
+EXP 8 ( VISUALISATION IN R)
+
+install.packages("ggplot2")
+install.packages("corrplot")
+install.packages("GGally")
+
+
+
+
+
+#Step 1: Load the dataset and required libraries
+We'll load the necessary libraries and the iris dataset.
+
+# Load necessary libraries
+library(ggplot2)
+library(corrplot)
+
+# Load the iris dataset
+data(iris)
+
+
+ 
+
+#Step 3: Pairwise scatter plots for visualizing relationships between variables
+We'll create scatter plots between pairs of variables to examine the relationships.
+
+# Scatter plot between Sepal.Length and Petal.Length
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point(aes(color = Species), size = 3) +
+  theme_minimal() +
+  labs(title = "Scatter plot: Sepal Length vs Petal Length", x = "Sepal Length", y = "Petal Length")
+
+#Step 4: Explore additional relationships with other scatter plots
+Next, let's look at the relationship between Sepal.Width and Petal.Width.
+# Scatter plot between Sepal.Width and Petal.Width
+ggplot(iris, aes(x = Sepal.Width, y = Petal.Width)) +
+  geom_point(aes(color = Species), size = 3) +
+  theme_minimal() +
+  labs(title = "Scatter plot: Sepal Width vs Petal Width", x = "Sepal Width", y = "Petal Width")
+
+#Step 5: Add regression lines to scatter plots for better understanding
+Adding regression lines to the scatter plots will help us understand the trend of the relationships.
+# Scatter plot with regression line: Sepal.Length vs Petal.Length
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point(aes(color = Species), size = 3) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  theme_minimal() +
+  labs(title = "Regression Line: Sepal Length vs Petal Length", x = "Sepal Length", y = "Petal Length")
+
+#Step 6: Examine relationships across all variables using a pair plot (using GGally)
+You can use the GGally package to create a pair plot (a matrix of scatter plots with histograms) for a more comprehensive visualization.
+
+# Load GGally library
+library(GGally)
+
+# Create a pair plot to show relationships across all numerical variables
+ggpairs(iris[, 1:4], aes(color = iris$Species))
+
+
+# Step 7: Correlation heatmap without using reshape2 or tibble
+
+# Load required library
+library(ggplot2)
+
+# Calculate the correlation matrix
+cor_matrix <- cor(iris[, 1:4])
+
+# Convert to long format manually
+cor_df <- as.data.frame(as.table(cor_matrix))
+
+# Plot the heatmap
+ggplot(cor_df, aes(x = Var1, y = Var2, fill = Freq)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = round(Freq, 2)), color = "black", size = 4) +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                       midpoint = 0, limit = c(-1, 1)) +
+  theme_minimal() +
+  labs(title = "Correlation Heatmap of Iris Variables", x = "", y = "") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+
+
+EXP9 ( PANDAS AND NUMPY)
+
+Step 1: Import Required Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.datasets import load_iris
+Step 2 and 3 : Load the Dataset & Add Extra Columns (for visual insights)
+iris = load_iris()
+df = pd.DataFrame(data=np.c_[iris['data'], iris['target']], 
+                  columns=iris['feature_names'] + ['target'])
+
+
+df['sepal_area'] = df['sepal length (cm)'] * df['sepal width (cm)']
+df['sepal_length_squared'] = df['sepal length (cm)'].apply(lambda x: x**2)
+Step 4: Histograms for Each Feature
+plt.figure(figsize=(12, 8))
+for i, feature in enumerate(iris['feature_names']):
+    plt.subplot(2, 2, i + 1)
+    sns.histplot(df[feature], kde=True, color='skyblue')
+    plt.title(f'Histogram: {feature}')
+plt.tight_layout()
+plt.show()
+
+🔹 Step 5: Boxplots by Target Class (0 = Setosa, 1 = Versicolor, 2 = Virginica)
+plt.figure(figsize=(12, 8))
+for i, feature in enumerate(iris['feature_names']):
+    plt.subplot(2, 2, i + 1)
+    sns.boxplot(x='target', y=feature, data=df, palette='Set2')
+    plt.title(f'{feature} by Target Class')
+plt.tight_layout()
+plt.show()
+C:\Users\Admin\AppData\Local\Temp\ipykernel_9500\2124411920.py:4: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.boxplot(x='target', y=feature, data=df, palette='Set2')
+C:\Users\Admin\AppData\Local\Temp\ipykernel_9500\2124411920.py:4: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.boxplot(x='target', y=feature, data=df, palette='Set2')
+C:\Users\Admin\AppData\Local\Temp\ipykernel_9500\2124411920.py:4: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.boxplot(x='target', y=feature, data=df, palette='Set2')
+C:\Users\Admin\AppData\Local\Temp\ipykernel_9500\2124411920.py:4: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.boxplot(x='target', y=feature, data=df, palette='Set2')
+
+🔹 Step 6: Correlation Matrix Heatmap
+plt.figure(figsize=(10, 6))
+sns.heatmap(df.corr(), annot=True, cmap='coolwarm', fmt=".2f")
+plt.title("Feature Correlation Heatmap")
+plt.show()
+
+🔹 Step 7 (Optional): Pairplot for All Feature Combinations
+sns.pairplot(df, hue='target', palette='husl')
+plt.suptitle("Pairplot: Iris Dataset by Class", y=1.02)
+plt.show()
+
+
+
+
+
+EXP10 ( HISTOGRAM,BAR,PIE)	
+
+
+
+
+Step1: Import Required Libraries
+
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    from sklearn.datasets import load_iris
+
+Step2: Load the Iris Dataset
+
+    iris = load_iris()
+    df = pd.DataFrame(data=np.c_[iris['data'], iris['target']], columns=iris['feature_names'] + ['target'])
+
+Step 3: Plot Histogram (Distribution of Sepal Length)
+
+    plt.figure(figsize=(8, 6))
+    sns.histplot(df['sepal length (cm)'], kde=True)
+    plt.title('Histogram of Sepal Length')
+    plt.xlabel('Sepal Length (cm)')
+    plt.ylabel('Frequency')
+    plt.show()
+
+[]
+
+Step 4: Bar Chart (Count of Target Classes)
+
+    plt.figure(figsize=(8, 6))
+    sns.countplot(x='target', data=df)
+    plt.title('Bar Chart of Target Classes')
+    plt.xlabel('Target Class')
+    plt.ylabel('Count')
+    plt.show()
+
+[]
+
+Step 5: Pie Chart (Proportion of Each Class)
+
+    # 3. Pie Chart (proportion of each target class)
+    target_counts = df['target'].value_counts()
+    plt.figure(figsize=(8, 6))
+    plt.pie(target_counts, labels=target_counts.index, autopct='%1.1f%%')
+    plt.title('Pie Chart of Target Classes')
+    plt.show()
+
+[]
+
+🔹 Step 6: Box Plot (Petal Length by Target Class)
+
+    # 4. Box Plot (distribution of petal length by target class)
+    plt.figure(figsize=(10, 6))
+    sns.boxplot(x='target', y='petal length (cm)', data=df)
+    plt.title('Box Plot of Petal Length by Target Class')
+    plt.xlabel('Target Class')
+    plt.ylabel('Petal Length (cm)')
+    plt.show()
+
+[]
+
+Step 7: Violin Plot (Petal Width by Target Class)
+
+    # 5. Violin Plot (distribution of petal width by target class)
+    plt.figure(figsize=(10, 6))
+    sns.violinplot(x='target', y='petal width (cm)', data=df)
+    plt.title('Violin Plot of Petal Width by Target Class')
+    plt.xlabel('Target Class')
+    plt.ylabel('Petal Width (cm)')
+    plt.show()
+
+[]
+
+Step 8: Regression Plot (Sepal Length vs Sepal Width)
+
+    # 6. Regression Plot (relationship between sepal length and sepal width)
+    plt.figure(figsize=(8, 6))
+    sns.regplot(x='sepal length (cm)', y='sepal width (cm)', data=df)
+    plt.title('Regression Plot of Sepal Length vs. Sepal Width')
+    plt.xlabel('Sepal Length (cm)')
+    plt.ylabel('Sepal Width (cm)')
+    plt.show()
+
+[]
+
+
+
+
+
+

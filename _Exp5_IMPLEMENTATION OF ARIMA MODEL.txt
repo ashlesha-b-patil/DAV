@@ -1,0 +1,119 @@
+
+
+IMPLEMENTATION OF ARIMA MODEL IN PYTHON
+
+Step 1: Import Libraries
+
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from sklearn.datasets import fetch_california_housing
+    from statsmodels.tsa.arima.model import ARIMA
+    from statsmodels.tsa.stattools import adfuller
+    from sklearn.metrics import mean_absolute_error, mean_squared_error
+
+Step 2: Load the Dataset and Create a Pseudo-Time-Series (Group by HouseAge)
+
+    data = fetch_california_housing()
+    df = pd.DataFrame(data.data, columns=data.feature_names)
+    df['MedHouseVal'] = data.target  # Add the target 
+
+    ts_data = df.groupby('HouseAge')['MedHouseVal'].mean().reset_index()
+
+Step 3: Visualize the Data and Check for Stationarity (ADF Test)
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(ts_data['HouseAge'], ts_data['MedHouseVal'])
+    plt.title('Average House Value by House Age')
+    plt.xlabel('House Age')
+    plt.ylabel('Average House Value')
+    plt.grid(True)
+    plt.show()
+
+    adf_result = adfuller(ts_data['MedHouseVal'])
+    print(f"ADF Statistic: {adf_result[0]}")
+    print(f"p-value: {adf_result[1]}")
+
+[]
+
+    ADF Statistic: -0.6133389878029727
+    p-value: 0.8679393862082889
+
+Step 4: Apply Differencing and Train-Test Split
+
+    ts_data['Diff_Val'] = ts_data['MedHouseVal'].diff()
+
+    # Check stationarity again
+    adf_diff_result = adfuller(ts_data['Diff_Val'].dropna())
+    print(f"ADF (Differenced) Statistic: {adf_diff_result[0]}")
+    print(f"p-value (Differenced): {adf_diff_result[1]}")
+
+    train_size = int(len(ts_data) * 0.8)
+    train = ts_data['MedHouseVal'][:train_size]
+    test = ts_data['MedHouseVal'][train_size:]
+
+    ADF (Differenced) Statistic: -6.1189966626889145
+    p-value (Differenced): 8.949756277120397e-08
+
+Step 5: Fit ARIMA Model and Forecast
+
+    model = ARIMA(train, order=(2,1,2))  # You can experiment with (p,d,q)
+    model_fit = model.fit()
+    print(model_fit.summary())
+
+    forecast = model_fit.forecast(steps=len(test))
+
+                                   SARIMAX Results                                
+    ==============================================================================
+    Dep. Variable:            MedHouseVal   No. Observations:                   41
+    Model:                 ARIMA(2, 1, 2)   Log Likelihood                  20.783
+    Date:                Mon, 21 Apr 2025   AIC                            -31.567
+    Time:                        20:53:39   BIC                            -23.122
+    Sample:                             0   HQIC                           -28.514
+                                     - 41                                         
+    Covariance Type:                  opg                                         
+    ==============================================================================
+                     coef    std err          z      P>|z|      [0.025      0.975]
+    ------------------------------------------------------------------------------
+    ar.L1         -1.0743      0.238     -4.518      0.000      -1.540      -0.608
+    ar.L2         -0.8642      0.238     -3.628      0.000      -1.331      -0.397
+    ma.L1          1.3383      1.852      0.723      0.470      -2.292       4.969
+    ma.L2          0.9847      2.602      0.378      0.705      -4.115       6.085
+    sigma2         0.0191      0.047      0.409      0.683      -0.073       0.111
+    ===================================================================================
+    Ljung-Box (L1) (Q):                   0.33   Jarque-Bera (JB):               389.47
+    Prob(Q):                              0.56   Prob(JB):                         0.00
+    Heteroskedasticity (H):               0.08   Skew:                             2.95
+    Prob(H) (two-sided):                  0.00   Kurtosis:                        17.10
+    ===================================================================================
+
+    Warnings:
+    [1] Covariance matrix calculated using the outer product of gradients (complex-step).
+
+    C:\Users\Admin\anaconda3\Lib\site-packages\statsmodels\base\model.py:607: ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check mle_retvals
+      warnings.warn("Maximum Likelihood optimization failed to "
+
+Step 6: Evaluate the Model and Plot Forecast vs Actual
+
+    mae = mean_absolute_error(test, forecast)
+    rmse = np.sqrt(mean_squared_error(test, forecast))
+    mape = np.mean(np.abs((test - forecast) / test)) * 100
+
+    print(f"MAE: {mae}")
+    print(f"RMSE: {rmse}")
+    print(f"MAPE: {mape}%")
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(train.index, train, label='Train')
+    plt.plot(test.index, test, label='Test', color='green')
+    plt.plot(test.index, forecast, label='Forecast', color='red')
+    plt.legend()
+    plt.title('ARIMA Forecast vs Actual')
+    plt.grid(True)
+    plt.show()
+
+    MAE: 0.20304543911698802
+    RMSE: 0.28088297553615404
+    MAPE: 8.683272182022682%
+
+[]

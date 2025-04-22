@@ -1,0 +1,63 @@
+﻿Step 1: Import Required Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.datasets import load_iris
+Step 2 and 3 : Load the Dataset & Add Extra Columns (for visual insights)
+iris = load_iris()
+df = pd.DataFrame(data=np.c_[iris['data'], iris['target']], 
+                  columns=iris['feature_names'] + ['target'])
+
+
+df['sepal_area'] = df['sepal length (cm)'] * df['sepal width (cm)']
+df['sepal_length_squared'] = df['sepal length (cm)'].apply(lambda x: x**2)
+Step 4: Histograms for Each Feature
+plt.figure(figsize=(12, 8))
+for i, feature in enumerate(iris['feature_names']):
+    plt.subplot(2, 2, i + 1)
+    sns.histplot(df[feature], kde=True, color='skyblue')
+    plt.title(f'Histogram: {feature}')
+plt.tight_layout()
+plt.show()
+
+🔹 Step 5: Boxplots by Target Class (0 = Setosa, 1 = Versicolor, 2 = Virginica)
+plt.figure(figsize=(12, 8))
+for i, feature in enumerate(iris['feature_names']):
+    plt.subplot(2, 2, i + 1)
+    sns.boxplot(x='target', y=feature, data=df, palette='Set2')
+    plt.title(f'{feature} by Target Class')
+plt.tight_layout()
+plt.show()
+C:\Users\Admin\AppData\Local\Temp\ipykernel_9500\2124411920.py:4: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.boxplot(x='target', y=feature, data=df, palette='Set2')
+C:\Users\Admin\AppData\Local\Temp\ipykernel_9500\2124411920.py:4: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.boxplot(x='target', y=feature, data=df, palette='Set2')
+C:\Users\Admin\AppData\Local\Temp\ipykernel_9500\2124411920.py:4: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.boxplot(x='target', y=feature, data=df, palette='Set2')
+C:\Users\Admin\AppData\Local\Temp\ipykernel_9500\2124411920.py:4: FutureWarning: 
+
+Passing `palette` without assigning `hue` is deprecated and will be removed in v0.14.0. Assign the `x` variable to `hue` and set `legend=False` for the same effect.
+
+  sns.boxplot(x='target', y=feature, data=df, palette='Set2')
+
+🔹 Step 6: Correlation Matrix Heatmap
+plt.figure(figsize=(10, 6))
+sns.heatmap(df.corr(), annot=True, cmap='coolwarm', fmt=".2f")
+plt.title("Feature Correlation Heatmap")
+plt.show()
+
+🔹 Step 7 (Optional): Pairplot for All Feature Combinations
+sns.pairplot(df, hue='target', palette='husl')
+plt.suptitle("Pairplot: Iris Dataset by Class", y=1.02)
+plt.show()
+

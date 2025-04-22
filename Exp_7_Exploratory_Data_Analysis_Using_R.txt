@@ -1,0 +1,59 @@
+🧪 EDA: Air Quality Dataset
+
+# Step 1: Load necessary libraries (base R is mostly enough for EDA)
+# airquality is an inbuilt dataset, so we just load it
+data("airquality")      # Load dataset
+df <- airquality        # Assign to a variable
+
+# Step 2: View basic structure and first few rows
+head(df)                # View first few rows
+str(df)                 # Structure: variable types and summary
+
+# Step 3: Check for missing values (NA)
+colSums(is.na(df))      # Count of NA values in each column
+
+# Step 4: Handle missing values
+# Option 1: Remove rows with NA
+df_clean <- na.omit(df)
+
+# Option 2: Impute with column means (if needed instead of omitting)
+# df$Ozone[is.na(df$Ozone)] <- mean(df$Ozone, na.rm = TRUE)
+# df$Solar.R[is.na(df$Solar.R)] <- mean(df$Solar.R, na.rm = TRUE)
+
+# Step 5: Summary statistics
+summary(df_clean)       # Min, Max, Mean, Median, etc.
+
+# Step 6: Scatter Plot - Temperature vs Ozone
+plot(df_clean$Temp, df_clean$Ozone,
+     main = "Ozone vs Temperature",
+     xlab = "Temperature (F)",
+     ylab = "Ozone (ppb)",
+     col = "blue", pch = 16)
+
+# Step 7: Histogram - Distribution of Ozone
+hist(df_clean$Ozone,
+     main = "Ozone Level Distribution",
+     xlab = "Ozone (ppb)",
+     col = "lightgreen", border = "black")
+
+# Step 8: Boxplot - Ozone by Month
+boxplot(Ozone ~ Month, data = df_clean,
+        main = "Ozone Levels by Month",
+        xlab = "Month", ylab = "Ozone (ppb)",
+        col = "lightblue")
+
+# Step 9: Boxplot - Temperature by Month
+boxplot(Temp ~ Month, data = df_clean,
+        main = "Temperature by Month",
+        xlab = "Month", ylab = "Temperature (F)",
+        col = "lightpink")
+
+# Step 10: Barplot - Average Wind Speed by Month
+avg_wind <- tapply(df_clean$Wind, df_clean$Month, mean)
+
+barplot(avg_wind,
+        main = "Average Wind Speed by Month",
+        xlab = "Month",
+        ylab = "Average Wind (mph)",
+        col = "orange")
+

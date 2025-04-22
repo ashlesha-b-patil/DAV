@@ -1,0 +1,74 @@
+✅ Section 1: Installation and Setup
+
+# List of libraries to use
+libs <- c("ggplot2", "dplyr", "tidyr", "datasets", "corrplot", 
+          "plotly", "ggthemes", "psych", "gridExtra", "lattice")
+
+# Install missing libraries
+install_if_missing <- function(pkg) {
+  if (!require(pkg, character.only = TRUE)) install.packages(pkg)
+}
+invisible(lapply(libs, install_if_missing))
+
+# Load all libraries
+lapply(libs, library, character.only = TRUE)
+
+# Load dataset
+data("mtcars")
+
+📊 Section 2: ggplot2 – Scatter Plot
+
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point(color = "blue") +
+  ggtitle("Weight vs MPG") +
+  theme_minimal()
+
+📈 Section 3: dplyr – Summary Table
+
+mtcars %>%
+  group_by(cyl) %>%
+  summarise(Avg_MPG = mean(mpg)) %>%
+  print()
+🧹 Section 4: tidyr – Row Names to Column
+
+mtcars2 <- mtcars %>%
+  mutate(Car = rownames(mtcars)) %>%
+  select(Car, everything())
+
+head(mtcars2)
+
+🔗 Section 5: corrplot – Correlation Matrix Plot
+
+corr_matrix <- cor(mtcars)
+corrplot(corr_matrix, method = "circle")
+
+🌀 Section 6: plotly – Interactive Plot
+
+plot_ly(data = mtcars, x = ~hp, y = ~qsec, type = "scatter", mode = "markers")
+
+🎨 Section 7: ggthemes – Styled Bar Plot
+
+ggplot(mtcars, aes(factor(cyl), fill = factor(gear))) +
+  geom_bar(position = "dodge") +
+  ggtitle("Cylinder vs Gear") +
+  theme_economist()
+
+📋 Section 8: psych – Describe Data
+
+describe(mtcars[, 1:5])
+
+🧩 Section 9: gridExtra – Arrange Multiple Plots
+
+p1 <- ggplot(mtcars, aes(x = wt, y = mpg)) + 
+  geom_point() + ggtitle("Weight vs MPG")
+
+p2 <- ggplot(mtcars, aes(factor(gear), fill = factor(cyl))) + 
+  geom_bar(position = "dodge") + ggtitle("Gear vs Cyl")
+
+grid.arrange(p1, p2, ncol = 2)
+
+📦 Section 10: lattice – Histogram by Group
+histogram(~mpg | factor(cyl), data = mtcars,
+          layout = c(3, 1),
+          main = "MPG by Cylinder Count",
+          col = "lightblue")
